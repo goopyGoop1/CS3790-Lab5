@@ -3,130 +3,161 @@
 # **Banker's Algorithm Program**
 
 ## **Overview**
-This program implements the **Banker's Algorithm**, a resource allocation and deadlock avoidance algorithm. It determines whether a system is in a safe state when processes request resources. The program reads resource allocation and requirements from an input file (`banker.txt`) and allows the user to simulate resource requests interactively.
+This program implements the **Banker's Algorithm**, which is a resource allocation and deadlock avoidance algorithm. The program ensures that the system remains in a safe state by evaluating requests for resources and preventing unsafe allocations. 
+
+The program reads the initial system state from a file (`banker.txt`) and interacts with the user to process resource requests for different processes.
 
 ---
 
 ## **Features**
-- Reads initial system state (MAX matrix, AVAILABLE vector) from a file.
-- Validates resource requests based on process needs and available resources.
-- Simulates resource allocation and checks the system's safety after every request.
-- Displays the current state of the system at every step (MAX, ALLOCATION, NEED, AVAILABLE).
-- Prevents unsafe states by denying requests that would lead to deadlocks.
+- Reads system configurations (MAX matrix and AVAILABLE vector) from `banker.txt`.
+- Allows interactive simulation of resource requests.
+- Validates requests and determines if they can be safely granted.
+- Displays the state of the system after every request, including:
+  - MAX matrix
+  - ALLOCATION matrix
+  - NEED matrix
+  - AVAILABLE vector
+- Ensures the system remains in a safe state by denying unsafe requests.
 
 ---
 
-## **How It Works**
-1. **Input Data**:
-   - The program reads the number of processes (`n`) and resource types (`m`) from a file (`banker.txt`).
-   - It initializes:
-     - **MAX Matrix**: Maximum resource demand for each process.
-     - **AVAILABLE Vector**: Total available resources for each type.
-     - **ALLOCATION Matrix**: Resources currently allocated to each process (starts at zero).
-     - **NEED Matrix**: Remaining resource needs for each process (initially equal to MAX).
+## **Input Files**
 
-2. **Interactive Requests**:
-   - The user specifies a process and its resource request vector.
-   - The program:
-     - Validates if the request is within the process's needs and the system's available resources.
-     - Simulates the allocation to check if the system remains in a safe state.
-     - Approves or denies the request based on safety.
+### 1. **`Bankers.cpp`**
+This is the source code for the program. It contains:
+- Functions for printing matrices and vectors.
+- Safety algorithm implementation (`isSafeState`).
+- Logic for handling user interactions and processing resource requests.
 
-3. **System State**:
-   - Displays matrices and vectors:
-     - **MAX**, **ALLOCATION**, **NEED**, and **AVAILABLE**.
-   - Provides feedback on approved or denied requests.
+### 2. **`banker.txt`**
+This file contains the initial configuration for the system, including:
+- Number of processes (`n`) and resource types (`m`).
+- **MAX Matrix**: Maximum resource demands for each process.
+- **AVAILABLE Vector**: Initially available resources for each type.
 
----
-
-## **Input File Format (`banker.txt`)**
-1. The first line specifies the number of processes (`n`) and resource types (`m`).
-2. The next `n` lines represent the MAX matrix (one line per process).
-3. The final line contains the AVAILABLE vector.
-
-### **Example Input (`banker.txt`):**
+### **Example `banker.txt` Format**:
 ```
-3 3
+5 3
 7 5 3
 3 2 2
 9 0 2
-3 3 2
+2 2 2
+4 3 3
+10 5 7
 ```
 
-- **Processes:** 3
-- **Resource Types:** 3
-- **MAX Matrix:**
-  ```
-  7 5 3
-  3 2 2
-  9 0 2
-  ```
-- **AVAILABLE Vector:**
-  ```
-  3 3 2
-  ```
+#### Breakdown:
+- **Line 1**: `5 3` (5 processes, 3 resource types)
+- **Lines 2–6**: MAX matrix (maximum resource requirements for each process)
+- **Line 7**: AVAILABLE vector (available resources for the system)
 
 ---
 
 ## **Usage Instructions**
-1. **Compile and Run**:
-   - Compile the program:
-     ```
-     g++ Bankers.cpp -o Bankers
-     ```
-   - Run the program:
-     ```
-     ./Bankers
-     ```
 
-2. **Interactive Inputs**:
-   - Enter a process number (e.g., `0`, `1`, `2`) or `-1` to exit.
-   - Provide a request vector with `m` resource values (e.g., `1 0 2`).
+### **Compile and Run**
+1. Compile the program using a C++ compiler:
+   ```
+   g++ Bankers.cpp -o Bankers
+   ```
+2. Run the program:
+   ```
+   ./Bankers
+   ```
 
-3. **Output**:
-   - The program will validate the request and:
-     - Approve and update the system state if safe.
-     - Deny the request if it leads to an unsafe state.
-   - Displays the current system state after every request.
+### **Interactive Inputs**
+- The program will prompt for:
+  1. **Process Number**: Enter a number between `0` and `n-1` or `-1` to exit.
+  2. **Request Vector**: Enter `m` space-separated integers representing the resource request.
 
 ---
 
-## **Key Functions**
-- **`printMatrix`**: Displays a matrix with a title.
-- **`printVector`**: Displays a vector with a title.
-- **`isSafeState`**: Determines if the system is in a safe state after a simulated allocation.
-- **`displayState`**: Prints the MAX, ALLOCATION, NEED matrices, and the AVAILABLE vector.
+## **Program Flow**
+
+1. **Initialization**:
+   - Reads `MAX` matrix and `AVAILABLE` vector from `banker.txt`.
+   - Initializes `ALLOCATION` matrix (all zeros) and `NEED` matrix (initially equal to MAX).
+
+2. **Request Handling**:
+   - Validates the request:
+     - Checks if the requested resources exceed the process's NEED or the AVAILABLE resources.
+   - Simulates allocation and checks the system's safety:
+     - Uses the `isSafeState` function to determine if the system remains safe.
+   - Either approves the request (updates ALLOCATION and NEED) or denies it.
+
+3. **State Display**:
+   - After processing each request, displays the current system state (MAX, ALLOCATION, NEED, AVAILABLE).
 
 ---
 
 ## **Example Run**
+
 ### **Input**:
-- Process `1` requests resources `[1, 0, 2]`.
+- File `banker.txt`:
+  ```
+  5 3
+  7 5 3
+  3 2 2
+  9 0 2
+  2 2 2
+  4 3 3
+  10 5 7
+  ```
+- Process `2` requests resources `[3, 0, 2]`.
 
 ### **Output**:
 ```
-Processing request for Process 1:
-Request Vector:   1   0   2
+Enter process number (0 to 4) or -1 to exit: 2
+Enter request vector (3 values): 3 0 2
+
+Processing request for Process 2:
 Request approved: System remains in a safe state.
 
 MAX:
     7    5    3
     3    2    2
     9    0    2
+    2    2    2
+    4    3    3
 ALLOCATION:
     0    0    0
-    1    0    2
+    0    0    0
+    3    0    2
+    0    0    0
     0    0    0
 NEED:
     7    5    3
-    2    2    0
-    9    0    2
+    3    2    2
+    6    0    0
+    2    2    2
+    4    3    3
 AVAILABLE:
-    2    3    0
+    7    5    5
 ```
 
 ---
 
 ## **Error Handling**
-- **File Errors**: Displays an error message if the input file cannot be opened.
-- **Invalid Input**: Rejects invalid process numbers and resource requests exceeding needs or availability.
+- **File Errors**:
+  - If `banker.txt` cannot be opened, the program will display:
+    ```
+    Error opening file.
+    ```
+- **Invalid Inputs**:
+  - Invalid process numbers and resource requests exceeding limits are rejected with a message:
+    ```
+    Invalid process number. Try again.
+    ```
+    or
+    ```
+    Request is not valid (exceeds need or available resources).
+    ```
+
+---
+
+## **Key Functions**
+- **`printMatrix`**: Displays a matrix with formatting.
+- **`printVector`**: Displays a vector with formatting.
+- **`isSafeState`**: Simulates resource allocation to check system safety.
+- **`displayState`**: Prints the MAX, ALLOCATION, NEED, and AVAILABLE matrices/vectors.
